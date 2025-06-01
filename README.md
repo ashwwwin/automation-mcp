@@ -1,6 +1,7 @@
 # 🚀 Automation MCP
 
 By [@ashwwwin](https://github.com/ashwwwin)
+
 Check out my free mcp manager, [furi](https://github.com/ashwwwin/furi) for a better experience.
 
 **Cross-platform desktop automation server for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
