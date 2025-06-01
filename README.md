@@ -1,9 +1,5 @@
 # 🚀 Automation MCP
 
-By [@ashwwwin](https://github.com/ashwwwin)
-
-Check out my free mcp manager, [furi](https://github.com/ashwwwin/furi) for a better experience.
-
 **Cross-platform desktop automation server for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
 
 ![Automation MCP Demo](https://img.shields.io/badge/Cross--Platform-Compatible-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue) ![MCP](https://img.shields.io/badge/MCP-Protocol-green)
@@ -22,13 +18,13 @@ Automation MCP is a Model Context Protocol (MCP) server that provides AI models 
 
 ## 🚀 Quick Start (under 30 seconds!)
 
-Make sure you have furi installed, and then run the following command:
+Make sure you have [furi](https://github.com/ashwwwin/furi) installed, and then run the following command:
 
 ```bash
-furi run automation-mcp
+furi add ashwwwin/automation-mcp
 ```
 
-followed by
+followed by:
 
 ```bash
 furi start automation-mcp
