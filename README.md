@@ -16,7 +16,7 @@ Automation MCP is a Model Context Protocol (MCP) server that provides AI models 
 - 🎨 **Analyze screen colors** and highlight regions
 - 🔍 **Wait for images** to appear on screen
 
-## 🚀 Quick Start (under 30 seconds!)
+## 🚀 Quick start
 
 Make sure you have [furi](https://github.com/ashwwwin/furi) installed, and then run the following command:
 
