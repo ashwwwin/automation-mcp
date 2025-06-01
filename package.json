@@ -4,7 +4,7 @@
   "type": "module",
   "private": false,
   "scripts": {
-    "start": "bun run index.ts"
+    "start": "npm rebuild node-mac-permissions && bun run index.ts --stdio"
   },
   "devDependencies": {
     "@types/bun": "latest"
