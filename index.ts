@@ -362,95 +362,139 @@ server.addTool({
       }
     ),
   execute: async ({ mode, region, windowName, windowId }) => {
-    // Prepare a temporary file path for the screenshot image
-    const filePath = path.join(os.tmpdir(), `mcp_screenshot_${Date.now()}.png`);
-
-    if (mode === "full") {
-      // Use macOS screencapture for full screen (works without nutjs)
-      child_process.execSync(`screencapture -x -D1 "${filePath}"`);
-    } else if (mode === "region" && region) {
-      const { x, y, width, height } = region;
-      // Use macOS screencapture for region
-      child_process.execSync(
-        `screencapture -x -R${x},${y},${width},${height} "${filePath}"`
+    try {
+      // Prepare a temporary file path for the screenshot image
+      const filePath = path.join(
+        os.tmpdir(),
+        `mcp_screenshot_${Date.now()}.png`
       );
-    } else if (mode === "window") {
-      let targetId = windowId;
-      if (!targetId) {
-        // Try to use nutjs first, fallback to get-windows
+
+      if (mode === "full") {
+        // Use macOS screencapture for full screen (works without nutjs)
         try {
-          if (nutjsAvailable) {
-            const windows = await getWindows();
-            const targetWin = await Promise.all(
-              windows.map(async (win: any) => ({
-                window: win,
-                title: await win.getTitle(),
-              }))
-            ).then(
-              (windowsWithTitles) =>
-                windowsWithTitles.find((w) => w.title.includes(windowName!))
-                  ?.window
-            );
-            if (targetWin) {
-              // Nut.js window objects don't directly provide a system-level window ID
-              // usable by screencapture. We'll rely on the fallback for window ID.
-              // However, if nut.js found a unique window, we can proceed with its region
-              // if that was the intent, though current tool screenshots the window by ID.
-              // For now, this path mainly validates window existence if windowName is used.
-              console.log(
-                "📋 nutjs found a matching window by title, will use fallback for ID if needed."
+          child_process.execSync(`screencapture -x -D1 "${filePath}"`);
+        } catch (error) {
+          throw new Error(`Failed to capture screenshot: ${error}`);
+        }
+      } else if (mode === "region" && region) {
+        const { x, y, width, height } = region;
+        // Use macOS screencapture for region
+        try {
+          child_process.execSync(
+            `screencapture -x -R${x},${y},${width},${height} "${filePath}"`
+          );
+        } catch (error) {
+          throw new Error(`Failed to capture region screenshot: ${error}`);
+        }
+      } else if (mode === "window") {
+        let targetId = windowId;
+        if (!targetId) {
+          // Try to use nutjs first, fallback to get-windows
+          try {
+            if (nutjsAvailable) {
+              const windows = await getWindows();
+              const targetWin = await Promise.all(
+                windows.map(async (win: any) => ({
+                  window: win,
+                  title: await win.getTitle(),
+                }))
+              ).then(
+                (windowsWithTitles) =>
+                  windowsWithTitles.find((w) => w.title.includes(windowName!))
+                    ?.window
               );
+              if (targetWin) {
+                // Nut.js window objects don't directly provide a system-level window ID
+                // usable by screencapture. We'll rely on the fallback for window ID.
+                // However, if nut.js found a unique window, we can proceed with its region
+                // if that was the intent, though current tool screenshots the window by ID.
+                // For now, this path mainly validates window existence if windowName is used.
+                console.log(
+                  "📋 nutjs found a matching window by title, will use fallback for ID if needed."
+                );
+              }
+            }
+          } catch (e) {
+            console.warn(
+              "⚠️ nutjs window lookup failed, trying fallback:",
+              (e as Error).message
+            );
+          }
+
+          // Fallback or primary path for getting window ID for screencapture
+          // This part is crucial if windowId was not provided or if nutjs couldn't supply a direct ID.
+          if (!targetId) {
+            // Ensure targetId is still needed
+            try {
+              const { openWindows } = require("get-windows");
+              const allWindows = await openWindows();
+              const targetWin = allWindows.find(
+                (w: any) =>
+                  w.title && windowName && w.title.includes(windowName) // Use includes for more flexible matching
+              );
+              if (!targetWin) {
+                throw new Error(
+                  `Window containing title "${windowName}" not found`
+                );
+              }
+              targetId = targetWin.id;
+            } catch (e) {
+              throw new Error(`Failed to find window: ${e}`);
             }
           }
-        } catch (e) {
-          console.warn(
-            "⚠️ nutjs window lookup failed, trying fallback:",
-            (e as Error).message
+        }
+        if (!targetId) {
+          // Final check if targetId was resolved
+          throw new Error(
+            "Could not determine target window ID for screenshot."
           );
         }
-
-        // Fallback or primary path for getting window ID for screencapture
-        // This part is crucial if windowId was not provided or if nutjs couldn't supply a direct ID.
-        if (!targetId) {
-          // Ensure targetId is still needed
-          try {
-            const { openWindows } = require("get-windows");
-            const allWindows = await openWindows();
-            const targetWin = allWindows.find(
-              (w: any) => w.title && windowName && w.title.includes(windowName) // Use includes for more flexible matching
-            );
-            if (!targetWin) {
-              throw new Error(
-                `Window containing title "${windowName}" not found`
-              );
-            }
-            targetId = targetWin.id;
-          } catch (e) {
-            throw new Error(`Failed to find window: ${e}`);
-          }
+        // Use macOS screencapture for window
+        try {
+          child_process.execSync(
+            `screencapture -x -l${targetId} "${filePath}"`
+          );
+        } catch (error) {
+          throw new Error(`Failed to capture window screenshot: ${error}`);
         }
       }
-      if (!targetId) {
-        // Final check if targetId was resolved
-        throw new Error("Could not determine target window ID for screenshot.");
+
+      // Check if file was created
+      if (!require("fs").existsSync(filePath)) {
+        throw new Error(`Screenshot file was not created at ${filePath}`);
       }
-      // Use macOS screencapture for window
-      child_process.execSync(`screencapture -x -l${targetId} "${filePath}"`);
+
+      let imageData;
+      try {
+        imageData = await imageContent({ path: filePath }); // Await the promise
+      } catch (error) {
+        throw new Error(`Failed to process screenshot image: ${error}`);
+      }
+
+      let sInfo;
+      try {
+        sInfo = await screenInfo(nutjsAvailable);
+      } catch (error) {
+        console.warn("Failed to get screen info:", error);
+        sInfo = "Screen info unavailable";
+      }
+
+      // Return multiple content items - image as proper ImageContent and screen info as text
+      return {
+        content: [
+          imageData, // The actual ImageContent object
+          {
+            type: "text",
+            text: `${sInfo}`,
+          },
+        ],
+      };
+    } catch (error) {
+      // Return a simple error message instead of throwing
+      return `Screenshot failed: ${
+        error instanceof Error ? error.message : String(error)
+      }`;
     }
-
-    const imageData = await imageContent({ path: filePath }); // Await the promise
-    const sInfo = await screenInfo(nutjsAvailable);
-
-    // Return multiple content items - image as proper ImageContent and screen info as text
-    return {
-      content: [
-        imageData, // The actual ImageContent object
-        {
-          type: "text",
-          text: `${sInfo}`,
-        },
-      ],
-    };
   },
 });
 
