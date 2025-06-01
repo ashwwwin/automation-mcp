@@ -1,0 +1,28 @@
+{
+  "name": "automation-mcp",
+  "module": "index.ts",
+  "type": "module",
+  "private": false,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "fastmcp": "^2.2.0",
+    "get-windows": "^9.2.0",
+    "jimp": "^1.6.0",
+    "node-mac-permissions": "^2.5.0",
+    "zod": "^3.25.46"
+  },
+  "version": "1.0.0",
+  "description": "Automation MCP, to automate inputs give models access to your computer with detailed control.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,39 @@
+{
+  "name": "nutjs-local-build",
+  "version": "1.0.0",
+  "description": "Local build of nut.js from source with libnut-core",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node index.ts",
+    "test": "node index.ts",
+    "build:libnut": "cd libnut-core && MACOSX_DEPLOYMENT_TARGET=11.0 bun run build:release",
+    "build:nutjs": "cd nut.js && bun run compile",
+    "build": "npm run build:libnut && npm run build:nutjs"
+  },
+  "dependencies": {
+    "@nut-tree/nut-js": "file:./nut.js/core/nut.js"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "os": [
+    "darwin",
+    "linux", 
+    "win32"
+  ],
+  "keywords": [
+    "automation",
+    "desktop",
+    "gui",
+    "mouse",
+    "keyboard",
+    "screen",
+    "testing"
+  ],
+  "author": "Built from nut-tree/nut.js source",
+  "license": "Apache-2.0"
+} 
