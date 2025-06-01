@@ -6,7 +6,7 @@
 
 ## ✨ What is Automation MCP?
 
-Automation MCP is a Model Context Protocol (MCP) server that provides AI models with **complete desktop automation capabilities** on Windows, macOS, and Linux. It enables AI assistants to:
+Automation MCP is a Model Context Protocol (MCP) server that provides AI models with **complete desktop automation capabilities** on macOS. It enables AI assistants to:
 
 - 🖱️ **Control your mouse** (click, move, scroll, drag)
 - ⌨️ **Type and send keyboard input** (including system shortcuts)
@@ -34,7 +34,6 @@ and you're done! (or you can just use the furi desktop app for no cli).
 
 ### Prerequisites
 
-- **Cross-platform support**: Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+)
 - **Bun** runtime - Install with: `curl -fsSL https://bun.sh/install | bash`
 
 ### 1. Clone and Install
@@ -55,14 +54,6 @@ On first run, macOS will ask for permissions. **You must grant these** for full 
 2. **Screen Recording** - Enables screenshots and screen analysis
 
 Or manually enable in: **System Settings** → **Privacy & Security** → **Accessibility/Screen Recording**
-
-#### Windows
-
-Windows may show security warnings for automation features. Allow the application when prompted.
-
-#### Linux
-
-Linux systems need X11 or Wayland with XWayland support. Most distributions work out of the box.
 
 ### 3. Start the Server
 
@@ -138,16 +129,6 @@ The server runs on `http://localhost:3010/stream` and provides 20+ automation to
    - Screen analysis
    - Color detection
 
-#### Windows
-
-- **Administrator privileges** may be required for some automation features
-- Windows Defender may flag automation tools - add exceptions as needed
-
-#### Linux
-
-- **X11/XWayland** - Required for GUI automation
-- Some distributions may require additional permissions for screen capture
-
 ### Permission Handling
 
 The server automatically:
@@ -188,29 +169,8 @@ The server automatically:
 
 **Permission Denied Errors**
 
-- **macOS**: Ensure Accessibility and Screen Recording permissions are granted
-- **Windows**: Run as administrator if needed
-- **Linux**: Check X11/XWayland configuration
-- Restart the application after granting permissions
-
-**nutjs Not Loading**
-
-- **macOS**: Ensure Xcode Command Line Tools: `xcode-select --install`
-- **Windows**: Install Visual Studio Build Tools
-- **Linux**: Install build-essential package
-- Try rebuilding: `cd nutjs && npm run build`
-- Basic functionality still works via system commands
-
-**Screenshot Failures**
-
-- **macOS**: Verify Screen Recording permission, fallback uses `screencapture`
-- **Windows**: Check Windows Security settings
-- **Linux**: Verify X11/XWayland display configuration
-
-**Port Already in Use**
-
-- Change port in index.ts or kill existing process
-- Default port is 3010
+- Ensure Accessibility and Screen Recording permissions are granted
+- Ensure Xcode Command Line Tools: `xcode-select --install`
 
 ## 🙋‍♂️ Support
 
