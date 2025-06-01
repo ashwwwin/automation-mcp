@@ -143,8 +143,9 @@ The server automatically:
 
 ### With Claude Desktop + furi
 
-1. Install Claude Desktop
-2. Add to your MCP configuration:
+If you've already configured furi with Claude Desktop, you don't need to do anything.
+
+Add to your MCP configuration:
 
 ```json
 {
@@ -159,8 +160,7 @@ The server automatically:
 
 ### With Claude Desktop
 
-1. Install Claude Desktop
-2. Add to your MCP configuration:
+Add to your MCP configuration:
 
 ```json
 {
