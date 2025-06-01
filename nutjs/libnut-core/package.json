@@ -1,0 +1,59 @@
+{
+  "name": "libnut",
+  "version": "2.7.1",
+  "description": "libnut is an N-API module for desktop automation with node",
+  "main": "index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "clean": "cmake-js clean",
+    "patch": "node ./patch-packagename.js",
+    "build:debug": "cmake-js rebuild --CDCMAKE_OSX_ARCHITECTURES=\"arm64;x86_64\" --debug",
+    "build:release": "cmake-js rebuild --CDCMAKE_OSX_ARCHITECTURES=\"arm64;x86_64\"",
+    "prepublishOnly": "npm run build:release",
+    "publish:next": "npm publish --tag next"
+  },
+  "homepage": "https://nutjs.dev",
+  "author": {
+    "name": "dry Software UG (haftungsbeschränkt)",
+    "email": "info@dry.software",
+    "url": "https://dry.software"
+  },
+  "bugs": {
+    "url": "https://github.com/nut-tree/nut.js/issues"
+  },
+  "keywords": [
+    "GUI",
+    "Automation",
+    "mouse",
+    "keyboard",
+    "screenshot",
+    "image",
+    "desktop",
+    "screen",
+    "recognition",
+    "autohotkey"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bindings": "1.5.0"
+  },
+  "devDependencies": {
+    "cmake-js": "7.3.0",
+    "node-addon-api": "7.1.0"
+  },
+  "optionalDependencies": {
+    "@nut-tree/node-mac-permissions": "2.2.1"
+  },
+  "engines": {
+    "node": ">=10.15.3"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
+}

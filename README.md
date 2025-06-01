@@ -19,8 +19,6 @@ Automation MCP is a Model Context Protocol (MCP) server that provides AI models 
 - 🎨 **Analyze screen colors** and highlight regions
 - 🔍 **Wait for images** to appear on screen
 
-Perfect for automating repetitive tasks, testing UIs, or giving AI assistants the ability to directly interact with your desktop applications.
-
 ## 🚀 Quick Start (under 30 seconds!)
 
 Make sure you have furi installed, and then run the following command:
@@ -106,76 +104,6 @@ The server runs on `http://localhost:3010/stream` and provides 20+ automation to
 - `getActiveWindow` - Get current active window
 - `windowControl` - Focus, move, resize, minimize windows
 
-### ⏱️ Utility Tools
-
-- `sleep` - Pause execution for timing
-
-## 📋 Usage Examples
-
-### Basic Mouse & Keyboard
-
-```javascript
-// Click the center of a 1920x1080 screen
-await mouseClick({ x: 960, y: 540 });
-
-// Type some text
-await type({ text: "Hello, World!" });
-
-// Use keyboard shortcut
-await systemCommand({ command: "copy" });
-```
-
-### Take a Screenshot
-
-```javascript
-// Full screen capture
-const screenshot = await screenshot({ mode: "full" });
-
-// Capture a specific region
-const region = await screenshot({
-  mode: "region",
-  region: { x: 100, y: 100, width: 800, height: 600 },
-});
-```
-
-### Window Management
-
-```javascript
-// List all windows
-const windows = await getWindows();
-
-// Focus a specific app
-await windowControl({
-  action: "focus",
-  windowTitle: "Safari",
-});
-
-// Move and resize window
-await windowControl({
-  action: "move",
-  windowTitle: "TextEdit",
-  x: 100,
-  y: 100,
-});
-```
-
-### Advanced Automation
-
-```javascript
-// Wait for a button to appear, then click it
-await waitForImage({ imagePath: "/path/to/button.png" });
-await mouseClick({ x: 200, y: 300 });
-
-// Smooth mouse movement along a path
-await mouseMovePath({
-  path: [
-    { x: 100, y: 100 },
-    { x: 200, y: 150 },
-    { x: 300, y: 200 },
-  ],
-});
-```
-
 ## 🔧 Architecture
 
 ### Core Components
@@ -256,36 +184,6 @@ const client = new MCPClient("http://localhost:3010/stream");
 // Take screenshot and analyze
 const screenshot = await client.call("screenshot", { mode: "full" });
 // AI can now see your screen!
-```
-
-## 🛠️ Development
-
-### Project Structure
-
-```
-automation-mcp/
-├── index.ts              # Main MCP server with all tools
-├── screenInfo.ts         # Screen dimension utilities
-├── nutjs/               # Custom nut.js build from source
-│   ├── nut.js/          # Full nut.js codebase
-│   ├── libnut-core/     # Native C++ module
-│   └── README.md        # Build instructions
-├── package.json         # Dependencies
-└── tsconfig.json        # TypeScript config
-```
-
-### Building from Source
-
-```bash
-# Install dependencies
-bun install
-
-# Run development server
-bun run index.ts
-
-# Build nutjs from source (if needed)
-cd nutjs
-npm run build
 ```
 
 ## 🐛 Troubleshooting

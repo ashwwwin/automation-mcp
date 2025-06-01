@@ -1,0 +1,14 @@
+import { ColorQuery, Image, MatchRequest, MatchResult, OptionalSearchParameters, Point, PointResultFindInput, Region, RegionResultFindInput, TextQuery } from "@nut-tree/shared";
+import { ProviderRegistry } from "@nut-tree/provider-interfaces";
+export declare function isRegionResultFindInput(input: RegionResultFindInput | PointResultFindInput): input is RegionResultFindInput;
+export declare function isPointResultFindInput(input: RegionResultFindInput | PointResultFindInput): input is PointResultFindInput;
+export declare function isImageMatchRequest<PROVIDER_DATA_TYPE>(matchRequest: any): matchRequest is MatchRequest<Image, PROVIDER_DATA_TYPE>;
+export declare function isTextMatchRequest<PROVIDER_DATA_TYPE>(matchRequest: any): matchRequest is MatchRequest<TextQuery, PROVIDER_DATA_TYPE>;
+export declare function isColorMatchRequest<PROVIDER_DATA_TYPE>(matchRequest: any): matchRequest is MatchRequest<ColorQuery, PROVIDER_DATA_TYPE>;
+export declare function createMatchRequest<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, needle: PointResultFindInput, searchRegion: Region, minMatch: number | undefined, screenImage: Image, params?: OptionalSearchParameters<PROVIDER_DATA_TYPE>): MatchRequest<PointResultFindInput, PROVIDER_DATA_TYPE>;
+export declare function createMatchRequest<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, needle: RegionResultFindInput, searchRegion: Region, minMatch: number | undefined, screenImage: Image, params?: OptionalSearchParameters<PROVIDER_DATA_TYPE>): MatchRequest<RegionResultFindInput, PROVIDER_DATA_TYPE>;
+export declare function createMatchRequest<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, needle: RegionResultFindInput | PointResultFindInput, searchRegion: Region, minMatch: number | undefined, screenImage: Image, params?: OptionalSearchParameters<PROVIDER_DATA_TYPE>): MatchRequest<RegionResultFindInput, PROVIDER_DATA_TYPE> | MatchRequest<PointResultFindInput, PROVIDER_DATA_TYPE>;
+export declare function getMatchResults<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, matchRequest: MatchRequest<RegionResultFindInput, PROVIDER_DATA_TYPE>): Promise<MatchResult<Region>[]>;
+export declare function getMatchResults<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, matchRequest: MatchRequest<PointResultFindInput, PROVIDER_DATA_TYPE>): Promise<MatchResult<Point>[]>;
+export declare function getMatchResult<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, matchRequest: MatchRequest<RegionResultFindInput, PROVIDER_DATA_TYPE>): Promise<MatchResult<Region>>;
+export declare function getMatchResult<PROVIDER_DATA_TYPE>(providerRegistry: ProviderRegistry, matchRequest: MatchRequest<PointResultFindInput, PROVIDER_DATA_TYPE>): Promise<MatchResult<Point>>;
