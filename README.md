@@ -44,18 +44,7 @@ cd automation-mcp
 bun install
 ```
 
-### 2. Grant Permissions
-
-#### macOS
-
-On first run, macOS will ask for permissions. **You must grant these** for full functionality:
-
-1. **Accessibility** - Allows keyboard/mouse control
-2. **Screen Recording** - Enables screenshots and screen analysis
-
-Or manually enable in: **System Settings** → **Privacy & Security** → **Accessibility/Screen Recording**
-
-### 3. Start the Server
+### 2. Start the Server
 
 ```bash
 # Start with HTTP transport (recommended for web apps)
@@ -65,9 +54,14 @@ bun run index.ts
 bun run index.ts --stdio
 ```
 
-### 4. Connect Your AI Tool
+### 3. Grant Permissions
 
-The server runs on `http://localhost:3010/stream` and provides 20+ automation tools ready to use with any MCP-compatible AI client.
+On first run, macOS will ask for permissions. **You must grant these** for full functionality:
+
+1. **Accessibility** - Allows keyboard/mouse control
+2. **Screen Recording** - Enables screenshots and screen analysis
+
+Or manually enable in: **System Settings** → **Privacy & Security** → **Accessibility/Screen Recording**
 
 ## 🛠️ Available Tools
 
