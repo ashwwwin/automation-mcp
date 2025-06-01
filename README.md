@@ -141,6 +141,22 @@ The server automatically:
 
 ## 🚀 Integration Examples
 
+### With Claude Desktop + furi
+
+1. Install Claude Desktop
+2. Add to your MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "furi": {
+      "command": "furi",
+      "args": ["connect"]
+    }
+  }
+}
+```
+
 ### With Claude Desktop
 
 1. Install Claude Desktop
