@@ -212,34 +212,6 @@ The server automatically:
 - Change port in index.ts or kill existing process
 - Default port is 3010
 
-## 📦 Dependencies
-
-### Main Dependencies
-
-- `fastmcp` - MCP protocol server
-- `zod` - Schema validation
-- `jimp` - Image processing
-- `node-mac-permissions` - macOS permission handling (macOS only)
-- `get-windows` - Cross-platform window enumeration
-
-### Native Dependencies
-
-- nut.js build (included, cross-platform)
-- libnut-core native module (included, cross-platform)
-
-## 📄 License
-
-MIT License - Use freely in your projects!
-
-## 🤝 Contributing
-
-Contributions welcome! Areas of interest:
-
-- Additional automation tools
-- Platform-specific optimizations
-- Performance improvements
-- Integration examples
-
 ## 🙋‍♂️ Support
 
 Having issues? Check the troubleshooting section above or open an issue with:
