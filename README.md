@@ -121,18 +121,6 @@ The server runs on `http://localhost:3010/stream` and provides 20+ automation to
 - **Screen Utilities** - Screenshot and analysis tools
 - **Fallback Systems** - Platform-specific implementations when needed
 
-### Custom nut.js Build
-
-This project includes a **custom-built nut.js** from source with:
-
-- ✅ Full cross-platform compatibility (Windows, macOS, Linux)
-- ✅ macOS 15+ compatibility fixes
-- ✅ Local libnut-core native module
-- ✅ No private registry dependencies
-- ✅ Full TypeScript support
-
-Located in `./nutjs/` - see [nutjs/README.md](nutjs/README.md) for build details.
-
 ## 🔒 Security & Permissions
 
 ### Platform-Specific Permissions
