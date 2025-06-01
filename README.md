@@ -30,7 +30,7 @@ followed by:
 furi start automation-mcp
 ```
 
-and you're done! (or you can just the use desktop app for no cli).
+and you're done! (or you can just use the furi desktop app for no cli).
 
 ### Prerequisites
 
