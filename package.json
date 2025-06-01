@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": false,
+  "scripts": {
+    "start": "bun run index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -19,9 +22,6 @@
   "version": "1.0.0",
   "description": "Automation MCP, to automate inputs give models access to your computer with detailed control.",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC"
