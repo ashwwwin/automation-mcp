@@ -3,13 +3,13 @@
 By [@ashwwwin](https://github.com/ashwwwin)
 Check out my free mcp manager, [furi](https://github.com/ashwwwin/furi) for a better experience.
 
-**The most comprehensive macOS automation server for AI models** - Give your AI assistant complete control over your Mac with detailed mouse, keyboard, screen, and window management capabilities.
+**The most comprehensive cross-platform desktop automation server for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
 
-![Automation MCP Demo](https://img.shields.io/badge/macOS-Compatible-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue) ![MCP](https://img.shields.io/badge/MCP-Protocol-green)
+![Automation MCP Demo](https://img.shields.io/badge/Cross--Platform-Compatible-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue) ![MCP](https://img.shields.io/badge/MCP-Protocol-green)
 
 ## ✨ What is Automation MCP?
 
-Automation MCP is a Model Context Protocol (MCP) server that provides AI models with **complete desktop automation capabilities** on macOS. It enables AI assistants to:
+Automation MCP is a Model Context Protocol (MCP) server that provides AI models with **complete desktop automation capabilities** on Windows, macOS, and Linux. It enables AI assistants to:
 
 - 🖱️ **Control your mouse** (click, move, scroll, drag)
 - ⌨️ **Type and send keyboard input** (including system shortcuts)
@@ -37,7 +37,7 @@ and you're done! (or you can just the use desktop app for no cli).
 
 ### Prerequisites
 
-- **macOS** (Tested on macOS 15+)
+- **Cross-platform support**: Windows 10+, macOS 10.15+, or Linux (Ubuntu 22.04+)
 - **Bun** runtime - Install with: `curl -fsSL https://bun.sh/install | bash`
 
 ### 1. Clone and Install
@@ -50,12 +50,22 @@ bun install
 
 ### 2. Grant Permissions
 
+#### macOS
+
 On first run, macOS will ask for permissions. **You must grant these** for full functionality:
 
 1. **Accessibility** - Allows keyboard/mouse control
 2. **Screen Recording** - Enables screenshots and screen analysis
 
 Or manually enable in: **System Settings** → **Privacy & Security** → **Accessibility/Screen Recording**
+
+#### Windows
+
+Windows may show security warnings for automation features. Allow the application when prompted.
+
+#### Linux
+
+Linux systems need X11 or Wayland with XWayland support. Most distributions work out of the box.
 
 ### 3. Start the Server
 
@@ -110,14 +120,15 @@ The server runs on `http://localhost:3010/stream` and provides 20+ automation to
 
 - **FastMCP Server** - Handles MCP protocol communication
 - **nut.js Integration** - Cross-platform desktop automation (custom built from source)
-- **macOS Permissions** - Native permission handling
+- **Platform Permissions** - Native permission handling (macOS/Windows/Linux)
 - **Screen Utilities** - Screenshot and analysis tools
-- **Fallback Systems** - Works even with limited dependencies
+- **Fallback Systems** - Platform-specific implementations when needed
 
 ### Custom nut.js Build
 
 This project includes a **custom-built nut.js** from source with:
 
+- ✅ Full cross-platform compatibility (Windows, macOS, Linux)
 - ✅ macOS 15+ compatibility fixes
 - ✅ Local libnut-core native module
 - ✅ No private registry dependencies
@@ -127,7 +138,9 @@ Located in `./nutjs/` - see [nutjs/README.md](nutjs/README.md) for build details
 
 ## 🔒 Security & Permissions
 
-### Required macOS Permissions
+### Platform-Specific Permissions
+
+#### macOS
 
 1. **Accessibility** - Required for:
 
@@ -140,14 +153,24 @@ Located in `./nutjs/` - see [nutjs/README.md](nutjs/README.md) for build details
    - Screen analysis
    - Color detection
 
+#### Windows
+
+- **Administrator privileges** may be required for some automation features
+- Windows Defender may flag automation tools - add exceptions as needed
+
+#### Linux
+
+- **X11/XWayland** - Required for GUI automation
+- Some distributions may require additional permissions for screen capture
+
 ### Permission Handling
 
 The server automatically:
 
-- Detects missing permissions
-- Requests permission grants
+- Detects missing permissions on supported platforms
+- Requests permission grants (macOS)
 - Provides fallback functionality when possible
-- Shows clear permission instructions
+- Shows clear platform-specific permission instructions
 
 ### Security Notes
 
@@ -174,38 +197,30 @@ The server automatically:
 }
 ```
 
-### With Custom Applications
-
-```typescript
-import { MCPClient } from "your-mcp-client";
-
-const client = new MCPClient("http://localhost:3010/stream");
-
-// Take screenshot and analyze
-const screenshot = await client.call("screenshot", { mode: "full" });
-// AI can now see your screen!
-```
-
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
 **Permission Denied Errors**
 
-- Ensure Accessibility permissions are granted
-- Check Screen Recording permissions
+- **macOS**: Ensure Accessibility and Screen Recording permissions are granted
+- **Windows**: Run as administrator if needed
+- **Linux**: Check X11/XWayland configuration
 - Restart the application after granting permissions
 
 **nutjs Not Loading**
 
-- Ensure Xcode Command Line Tools: `xcode-select --install`
+- **macOS**: Ensure Xcode Command Line Tools: `xcode-select --install`
+- **Windows**: Install Visual Studio Build Tools
+- **Linux**: Install build-essential package
 - Try rebuilding: `cd nutjs && npm run build`
 - Basic functionality still works via system commands
 
 **Screenshot Failures**
 
-- Verify Screen Recording permission
-- Try the fallback: Uses macOS `screencapture` command
+- **macOS**: Verify Screen Recording permission, fallback uses `screencapture`
+- **Windows**: Check Windows Security settings
+- **Linux**: Verify X11/XWayland display configuration
 
 **Port Already in Use**
 
@@ -219,13 +234,13 @@ const screenshot = await client.call("screenshot", { mode: "full" });
 - `fastmcp` - MCP protocol server
 - `zod` - Schema validation
 - `jimp` - Image processing
-- `node-mac-permissions` - macOS permission handling
-- `get-windows` - Window enumeration
+- `node-mac-permissions` - macOS permission handling (macOS only)
+- `get-windows` - Cross-platform window enumeration
 
 ### Native Dependencies
 
-- nut.js build (included)
-- libnut-core native module (included)
+- nut.js build (included, cross-platform)
+- libnut-core native module (included, cross-platform)
 
 ## 📄 License
 
@@ -236,18 +251,18 @@ MIT License - Use freely in your projects!
 Contributions welcome! Areas of interest:
 
 - Additional automation tools
-- Cross-platform support (Windows/Linux)
-- Performance optimizations
+- Platform-specific optimizations
+- Performance improvements
 - Integration examples
 
 ## 🙋‍♂️ Support
 
 Having issues? Check the troubleshooting section above or open an issue with:
 
-- Your macOS version
+- Your operating system and version
 - Error messages
 - Steps to reproduce
 
 ---
 
-**Happy Automating! 🎉** Give your AI the power to control your Mac like never before.
+**Happy Automating! 🎉** Give your AI the power to control your computer like never before.
