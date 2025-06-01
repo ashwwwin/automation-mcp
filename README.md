@@ -32,7 +32,7 @@ furi start automation-mcp
 
 and you're done! (or you can just use the furi desktop app for no cli).
 
-## Normal start (without furi)
+## 🥲 Normal start (without furi)
 
 ### Prerequisites
 
