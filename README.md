@@ -1,6 +1,6 @@
 # 🚀 Automation MCP
 
-**Cross-platform desktop automation server for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
+**Desktop automation for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
 
 ![Automation MCP Demo](https://img.shields.io/badge/Cross--Platform-Compatible-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue) ![MCP](https://img.shields.io/badge/MCP-Protocol-green)
 
