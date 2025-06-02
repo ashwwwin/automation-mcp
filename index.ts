@@ -757,19 +757,29 @@ server.addTool({
   description: "Move mouse along a path of coordinates with smooth animation.",
   parameters: z.object({
     path: z
-      .array(
-        z.object({
-          x: z.number(),
-          y: z.number(),
-        })
-      )
-      .describe("Array of coordinates to move through"),
+      .array(z.number())
+      .describe(
+        "Array of coordinates to move through (alternating x,y values: [x1,y1,x2,y2,...])"
+      ),
   }),
   execute: async ({ path }) => {
     requireNutjs();
-    const points = path.map((p) => new Point(p.x, p.y));
+
+    // Validate that we have an even number of coordinates
+    if (path.length % 2 !== 0) {
+      throw new Error(
+        "Path array must contain an even number of values (alternating x,y coordinates)"
+      );
+    }
+
+    // Convert flat array to Point objects
+    const points: any[] = [];
+    for (let i = 0; i < path.length; i += 2) {
+      points.push(new Point(path[i], path[i + 1]));
+    }
+
     await mouse.move(points);
-    return `Mouse moved along path with ${path.length} points`;
+    return `Mouse moved along path with ${points.length} points`;
   },
 });
 
