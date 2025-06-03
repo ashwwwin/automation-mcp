@@ -258,23 +258,24 @@ server.addTool({
 // Tool 8: Enhanced Keyboard Typing
 server.addTool({
   name: "type",
-  description: "Simulate typing text or pressing key combinations.",
-  parameters: z
-    .object({
-      text: z.string().optional().describe("Literal text to type (optional)"),
-      keys: z
-        .array(z.string())
-        .optional()
-        .describe("Key names to press simultaneously (optional)"),
-    })
-    .refine((data) => data.text || data.keys, {
-      message: "Provide `text` to type or `keys` for key combo.",
-    }),
+  description:
+    "Simulate typing text or pressing key combinations. Provide either 'text' to type literal text, or 'keys' as comma-separated key names for key combinations.",
+  parameters: z.object({
+    text: z.string().optional().describe("Literal text to type (optional)"),
+    keys: z
+      .string()
+      .optional()
+      .describe(
+        "Comma-separated key names to press simultaneously (optional, e.g. 'LeftControl,C')"
+      ),
+  }),
   execute: async ({ text, keys }) => {
     requireNutjs();
-    if (keys && keys.length) {
+    if (keys && keys.length > 0) {
+      // Parse comma-separated key names
+      const keyNames = keys.split(",").map((k) => k.trim());
       // Map each key name to nut.js Key constant
-      const keyConsts: any[] = keys.map((name) => {
+      const keyConsts: any[] = keyNames.map((name) => {
         const keyConst = (Key as any)[name];
         if (!keyConst) throw new Error(`Unknown key: ${name}`);
         return keyConst;
@@ -282,13 +283,15 @@ server.addTool({
       // Press and release the key combination
       await keyboard.pressKey(...keyConsts);
       await keyboard.releaseKey(...keyConsts);
-      return `Pressed key combination [${keys.join(" + ")}].`;
+      return `Pressed key combination [${keyNames.join(" + ")}].`;
     }
     if (text !== undefined) {
       await keyboard.type(text);
       return `Typed text: "${text}"`;
     }
-    return "No input provided.";
+    throw new Error(
+      "Provide either 'text' to type or 'keys' for key combination."
+    );
   },
 });
 
@@ -298,11 +301,16 @@ server.addTool({
   description: "Press or release specific keys for advanced key combinations.",
   parameters: z.object({
     action: z.enum(["press", "release"]).describe("Action to perform"),
-    keys: z.array(z.string()).describe("Array of key names to control"),
+    keys: z
+      .string()
+      .describe(
+        "Comma-separated key names to control (e.g. 'LeftControl,LeftShift')"
+      ),
   }),
   execute: async ({ action, keys }) => {
     requireNutjs();
-    const keyConsts: any[] = keys.map((name) => {
+    const keyNames = keys.split(",").map((k) => k.trim());
+    const keyConsts: any[] = keyNames.map((name) => {
       const keyConst = (Key as any)[name];
       if (!keyConst) throw new Error(`Unknown key: ${name}`);
       return keyConst;
@@ -310,10 +318,10 @@ server.addTool({
 
     if (action === "press") {
       await keyboard.pressKey(...keyConsts);
-      return `Pressed keys: [${keys.join(", ")}]`;
+      return `Pressed keys: [${keyNames.join(", ")}]`;
     } else {
       await keyboard.releaseKey(...keyConsts);
-      return `Released keys: [${keys.join(", ")}]`;
+      return `Released keys: [${keyNames.join(", ")}]`;
     }
   },
 });
@@ -324,176 +332,128 @@ server.addTool({
 server.addTool({
   name: "screenshot",
   description:
-    "Capture a screenshot (full screen, region, or window). Default to full screen if no preference. This will also provide information about the user's screen in order to correctly position mouse clicks and keyboard inputs.",
-  parameters: z
-    .object({
-      mode: z
-        .enum(["full", "region", "window"])
-        .default("full")
-        .describe("Capture mode: full (entire screen), region, or window"),
-      region: z
-        .object({
-          x: z.number(),
-          y: z.number(),
-          width: z.number(),
-          height: z.number(),
-        })
-        .optional()
-        .describe("Region coords (required if mode=region)"),
-      windowName: z
-        .string()
-        .optional()
-        .describe("Window title (if mode=window)"),
-      windowId: z.number().optional().describe("Window ID (if mode=window)"),
-    })
-    .refine(
-      (data) => {
-        if (data.mode === "region") {
-          return data.region !== undefined;
-        }
-        if (data.mode === "window") {
-          return data.windowName || data.windowId;
-        }
-        return true;
-      },
-      {
-        message:
-          "Provide region for 'region' mode, or windowId/windowName for 'window' mode.",
-      }
-    ),
-  execute: async ({ mode, region, windowName, windowId }) => {
+    "Capture a screenshot (full screen, region, or window). This will also provide information about the user's screen. Note: Due to technical limitations, actual image data is not returned, but screenshot capture is confirmed.",
+  parameters: z.object({
+    mode: z
+      .enum(["full", "region", "window"])
+      .default("full")
+      .describe("Capture mode: full (entire screen), region, or window"),
+    regionX: z
+      .number()
+      .optional()
+      .describe("Region X coordinate (for region mode)"),
+    regionY: z
+      .number()
+      .optional()
+      .describe("Region Y coordinate (for region mode)"),
+    regionWidth: z
+      .number()
+      .optional()
+      .describe("Region width (for region mode)"),
+    regionHeight: z
+      .number()
+      .optional()
+      .describe("Region height (for region mode)"),
+    windowName: z.string().optional().describe("Window title (if mode=window)"),
+    windowId: z.number().optional().describe("Window ID (if mode=window)"),
+  }),
+  execute: async ({
+    mode,
+    regionX,
+    regionY,
+    regionWidth,
+    regionHeight,
+    windowName,
+    windowId,
+  }) => {
     try {
-      // Prepare a temporary file path for the screenshot image
       const filePath = path.join(
         os.tmpdir(),
         `mcp_screenshot_${Date.now()}.png`
       );
 
+      // Perform the OS-level screencapture
       if (mode === "full") {
-        // Use macOS screencapture for full screen (works without nutjs)
-        try {
-          child_process.execSync(`screencapture -x -D1 "${filePath}"`);
-        } catch (error) {
-          throw new Error(`Failed to capture screenshot: ${error}`);
-        }
-      } else if (mode === "region" && region) {
-        const { x, y, width, height } = region;
-        // Use macOS screencapture for region
-        try {
-          child_process.execSync(
-            `screencapture -x -R${x},${y},${width},${height} "${filePath}"`
+        child_process.execSync(`screencapture -x -D1 "${filePath}"`);
+      } else if (mode === "region") {
+        if (
+          regionX === undefined ||
+          regionY === undefined ||
+          regionWidth === undefined ||
+          regionHeight === undefined
+        ) {
+          throw new Error(
+            "Region mode requires regionX, regionY, regionWidth, and regionHeight parameters"
           );
-        } catch (error) {
-          throw new Error(`Failed to capture region screenshot: ${error}`);
         }
+        child_process.execSync(
+          `screencapture -x -R${regionX},${regionY},${regionWidth},${regionHeight} "${filePath}"`
+        );
       } else if (mode === "window") {
         let targetId = windowId;
-        if (!targetId) {
-          // Try to use nutjs first, fallback to get-windows
-          try {
-            if (nutjsAvailable) {
-              const windows = await getWindows();
-              const targetWin = await Promise.all(
-                windows.map(async (win: any) => ({
-                  window: win,
-                  title: await win.getTitle(),
-                }))
-              ).then(
-                (windowsWithTitles) =>
-                  windowsWithTitles.find((w) => w.title.includes(windowName!))
-                    ?.window
-              );
-              if (targetWin) {
-                // Nut.js window objects don't directly provide a system-level window ID
-                // usable by screencapture. We'll rely on the fallback for window ID.
-                // However, if nut.js found a unique window, we can proceed with its region
-                // if that was the intent, though current tool screenshots the window by ID.
-                // For now, this path mainly validates window existence if windowName is used.
-                console.log(
-                  "📋 nutjs found a matching window by title, will use fallback for ID if needed."
-                );
-              }
-            }
-          } catch (e) {
-            console.warn(
-              "⚠️ nutjs window lookup failed, trying fallback:",
-              (e as Error).message
+        if (!targetId && windowName) {
+          const { openWindows } = require("get-windows");
+          const allWindows = await openWindows();
+          const targetWin = allWindows.find(
+            (w: any) => w.title && w.title.includes(windowName)
+          );
+          if (!targetWin)
+            throw new Error(
+              `Window containing title "${windowName}" not found`
             );
-          }
-
-          // Fallback or primary path for getting window ID for screencapture
-          // This part is crucial if windowId was not provided or if nutjs couldn't supply a direct ID.
-          if (!targetId) {
-            // Ensure targetId is still needed
-            try {
-              const { openWindows } = require("get-windows");
-              const allWindows = await openWindows();
-              const targetWin = allWindows.find(
-                (w: any) =>
-                  w.title && windowName && w.title.includes(windowName) // Use includes for more flexible matching
-              );
-              if (!targetWin) {
-                throw new Error(
-                  `Window containing title "${windowName}" not found`
-                );
-              }
-              targetId = targetWin.id;
-            } catch (e) {
-              throw new Error(`Failed to find window: ${e}`);
-            }
-          }
+          targetId = targetWin.id;
         }
-        if (!targetId) {
-          // Final check if targetId was resolved
+        if (!targetId)
           throw new Error(
             "Could not determine target window ID for screenshot."
           );
-        }
-        // Use macOS screencapture for window
-        try {
-          child_process.execSync(
-            `screencapture -x -l${targetId} "${filePath}"`
-          );
-        } catch (error) {
-          throw new Error(`Failed to capture window screenshot: ${error}`);
-        }
+        child_process.execSync(`screencapture -x -l${targetId} "${filePath}"`);
       }
 
-      // Check if file was created
       if (!require("fs").existsSync(filePath)) {
         throw new Error(`Screenshot file was not created at ${filePath}`);
       }
 
-      let imageData;
+      // Test imageContent to ensure it works, but don't return raw data
+      let imageProcessingResult: string;
       try {
-        imageData = await imageContent({ path: filePath }); // Await the promise
-      } catch (error) {
-        throw new Error(`Failed to process screenshot image: ${error}`);
+        const imageDataResult = await imageContent({ path: filePath });
+        JSON.stringify(imageDataResult); // Verify it can be stringified
+        imageProcessingResult = `Screenshot successfully captured and processed. File saved to: ${filePath}`;
+      } catch (imageError: any) {
+        imageProcessingResult = `Screenshot captured to ${filePath}, but image processing failed: ${String(
+          imageError.message || imageError
+        ).substring(0, 100)}`;
       }
 
-      let sInfo;
+      // Get screen info (this works fine)
+      let screenInfoResult: string;
       try {
-        sInfo = await screenInfo(nutjsAvailable);
-      } catch (error) {
-        console.warn("Failed to get screen info:", error);
-        sInfo = "Screen info unavailable";
+        screenInfoResult = await screenInfo(nutjsAvailable);
+      } catch (error: any) {
+        screenInfoResult = `Screen info unavailable: ${String(
+          error.message || error
+        ).substring(0, 100)}`;
       }
 
-      // Return multiple content items - image as proper ImageContent and screen info as text
       return {
         content: [
-          imageData, // The actual ImageContent object
-          {
-            type: "text",
-            text: `${sInfo}`,
-          },
+          { type: "text", text: imageProcessingResult },
+          { type: "text", text: screenInfoResult },
         ],
       };
-    } catch (error) {
-      // Return a simple error message instead of throwing
-      return `Screenshot failed: ${
-        error instanceof Error ? error.message : String(error)
-      }`;
+    } catch (error: any) {
+      if (error instanceof RangeError) {
+        throw new Error("Screenshot failed: Stack overflow detected");
+      }
+      let errorMessage = "Unknown error";
+      try {
+        errorMessage =
+          error && error.message ? String(error.message) : String(error);
+      } catch (e) {
+        errorMessage = "Error object could not be processed";
+      }
+      throw new Error(`Screenshot failed: ${errorMessage.substring(0, 300)}`);
     }
   },
 });
