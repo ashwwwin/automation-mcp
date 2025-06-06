@@ -332,7 +332,7 @@ server.addTool({
 server.addTool({
   name: "screenshot",
   description:
-    "Capture a screenshot (full screen, region, or window). This will also provide information about the user's screen. Note: Due to technical limitations, actual image data is not returned, but screenshot capture is confirmed.",
+    "Capture a screenshot (full screen, region, or window). Default to full screen if no preference. This will also provide information about the user's screen in order to correctly position mouse clicks and keyboard inputs.",
   parameters: z.object({
     mode: z
       .enum(["full", "region", "window"])
@@ -414,47 +414,8 @@ server.addTool({
         throw new Error(`Screenshot file was not created at ${filePath}`);
       }
 
-      // Test imageContent to ensure it works, but don't return raw data
-      let imageProcessingResult: string;
-      try {
-        const imageDataResult = await imageContent({ path: filePath });
-        JSON.stringify(imageDataResult); // Verify it can be stringified
-        imageProcessingResult = `Screenshot successfully captured and processed. File saved to: ${filePath}`;
-      } catch (imageError: any) {
-        imageProcessingResult = `Screenshot captured to ${filePath}, but image processing failed: ${String(
-          imageError.message || imageError
-        ).substring(0, 100)}`;
-      }
-
-      // Get screen info (this works fine)
-      let screenInfoResult: string;
-      try {
-        screenInfoResult = await screenInfo(nutjsAvailable);
-      } catch (error: any) {
-        screenInfoResult = `Screen info unavailable: ${String(
-          error.message || error
-        ).substring(0, 100)}`;
-      }
-
-      return {
-        content: [
-          { type: "text", text: imageProcessingResult },
-          { type: "text", text: screenInfoResult },
-        ],
-      };
-    } catch (error: any) {
-      if (error instanceof RangeError) {
-        throw new Error("Screenshot failed: Stack overflow detected");
-      }
-      let errorMessage = "Unknown error";
-      try {
-        errorMessage =
-          error && error.message ? String(error.message) : String(error);
-      } catch (e) {
-        errorMessage = "Error object could not be processed";
-      }
-      throw new Error(`Screenshot failed: ${errorMessage.substring(0, 300)}`);
-    }
+      return await imageContent({ path: filePath });
+    } catch (error: any) {}
   },
 });
 
