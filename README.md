@@ -1,9 +1,5 @@
 # 🤖 Automation MCP
 
-**Desktop automation for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
-
-## ✨ What is Automation MCP?
-
 Automation MCP is a Model Context Protocol (MCP) server that provides AI models with **complete desktop automation capabilities** on macOS. It enables AI assistants to:
 
 - 🖱️ **Control your mouse** (click, move, scroll, drag)
