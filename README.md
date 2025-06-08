@@ -1,4 +1,4 @@
-# 🚀 Automation MCP
+# 🤖 Automation MCP
 
 **Desktop automation for AI models** - Give your AI assistant complete control over your computer with detailed mouse, keyboard, screen, and window management capabilities.
 
@@ -108,10 +108,6 @@ Or manually enable in: **System Settings** → **Privacy & Security** → **Acce
 
 ## 🔒 Security & Permissions
 
-### Platform-Specific Permissions
-
-#### macOS
-
 1. **Accessibility** - Required for:
 
    - Mouse clicks and movement
@@ -122,22 +118,6 @@ Or manually enable in: **System Settings** → **Privacy & Security** → **Acce
    - Taking screenshots
    - Screen analysis
    - Color detection
-
-### Permission Handling
-
-The server automatically:
-
-- Detects missing permissions on supported platforms
-- Requests permission grants (macOS)
-- Provides fallback functionality when possible
-- Shows clear platform-specific permission instructions
-
-### Security Notes
-
-- Runs locally only (no network access)
-- Requires explicit permission grants
-- Can be limited to specific applications
-- All actions are logged
 
 ## 🚀 Integration Examples
 
@@ -189,7 +169,3 @@ Having issues? Check the troubleshooting section above or open an issue with:
 - Your operating system and version
 - Error messages
 - Steps to reproduce
-
----
-
-**Happy Automating! 🎉** Give your AI the power to control your computer like never before.
