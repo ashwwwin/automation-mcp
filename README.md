@@ -96,16 +96,6 @@ Or manually enable in: **System Settings** → **Privacy & Security** → **Acce
 - `getActiveWindow` - Get current active window
 - `windowControl` - Focus, move, resize, minimize windows
 
-## 🔧 Architecture
-
-### Core Components
-
-- **FastMCP Server** - Handles MCP protocol communication
-- **nut.js Integration** - Cross-platform desktop automation (custom built from source)
-- **Platform Permissions** - Native permission handling (macOS/Windows/Linux)
-- **Screen Utilities** - Screenshot and analysis tools
-- **Fallback Systems** - Platform-specific implementations when needed
-
 ## 🔒 Security & Permissions
 
 1. **Accessibility** - Required for:
