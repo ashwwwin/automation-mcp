@@ -21,7 +21,7 @@ furi add ashwwwin/automation-mcp
 followed by:
 
 ```bash
-furi start automation-mcp
+furi start ashwwwin/automation-mcp
 ```
 
 and you're done! (or you can just use the furi desktop app for no cli).
