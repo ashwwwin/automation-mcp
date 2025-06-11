@@ -276,7 +276,8 @@ server.addTool({
       const keyNames = keys.split(",").map((k) => k.trim());
       // Map each key name to nut.js Key constant
       const keyConsts: any[] = keyNames.map((name) => {
-        const keyConst = (Key as any)[name];
+        const keyName = name === "Command" ? "LeftSuper" : name;
+        const keyConst = (Key as any)[keyName];
         if (!keyConst) throw new Error(`Unknown key: ${name}`);
         return keyConst;
       });
@@ -311,7 +312,8 @@ server.addTool({
     requireNutjs();
     const keyNames = keys.split(",").map((k) => k.trim());
     const keyConsts: any[] = keyNames.map((name) => {
-      const keyConst = (Key as any)[name];
+      const keyName = name === "Command" ? "LeftSuper" : name;
+      const keyConst = (Key as any)[keyName];
       if (!keyConst) throw new Error(`Unknown key: ${name}`);
       return keyConst;
     });
